@@ -155,6 +155,9 @@ defmodule Elibuf.Primitives do
             base.name != :none && is_bitstring(base.name)
         end
 
+        @doc """
+        Checks if type is supported, in-case user changes it.
+        """
         def valid_type(%Base{} = base) do
             @allowed_types
             |> Enum.member?(base.type)
@@ -206,6 +209,20 @@ defmodule Elibuf.Primitives do
                 %{has_order: false} -> {validation_errors, false}
                 %{has_name: false} -> {validation_errors, false}
                 %{valid_type: false} -> {validation_errors, false}
+                _ -> {validation_errors, true}
+            end
+        end
+
+        @doc """
+        Validates type without checking for valid_type
+        """
+        def validate(%Base{} = base, :no_type_check) do
+            validation_errors = %{}
+            |> Map.put(:has_order, has_order?(base))
+            |> Map.put(:has_name, has_name?(base))
+            case validation_errors do
+                %{has_order: false} -> {validation_errors, false}
+                %{has_name: false} -> {validation_errors, false}
                 _ -> {validation_errors, true}
             end
         end
