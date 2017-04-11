@@ -1,18 +1,11 @@
 defmodule Elibuf do
   @moduledoc """
-  Documentation for Elibuf.
+  Elibuf:
+  Generates protobuf specification from elixir
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Elibuf.hello
-      :world
-
-  """
   def hello do
     :world
   end
+  
 end
