@@ -45,6 +45,20 @@ defmodule Elibuf.Primitives do
         end
 
         @doc """
+        Sets the repeating value
+        """
+        def set_repeating(%Base{} = base, repeating_value) when is_boolean(repeating_value) do
+            base.repeating = repeating_value
+        end
+
+        @doc """
+        Toggles (flips) the repeating value
+        """
+        def toggle_repeating(%Base{} = base) do
+            base.repeating = !base.repeating
+        end
+
+        @doc """
         Returns boolean if type is required
 
         Example:
@@ -53,6 +67,20 @@ defmodule Elibuf.Primitives do
         """
         def required?(%Base{} = base) do
             base.required
+        end
+
+        @doc """
+        Sets the required value
+        """
+        def set_required(%Base{} = base, required_value) when is_boolean(required_value) do
+            base.required = required_value
+        end
+
+        @doc """
+        Toggles (flips) the required value
+        """
+        def toggle_required(%Base{} = base) do
+            base.required = !base.required
         end
 
         @doc """
