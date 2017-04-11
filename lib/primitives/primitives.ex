@@ -73,6 +73,11 @@ defmodule Elibuf.Primitives do
 
         @doc """
         Sets the required value
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            Elibuf.Primitives.Base.set_required(my_double, true)
+            # my_double.required is TRUE
         """
         def set_required(%Base{} = base, required_value) when is_boolean(required_value) do
             %{base | required: required_value}
@@ -80,6 +85,12 @@ defmodule Elibuf.Primitives do
 
         @doc """
         Toggles (flips) the required value
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            Elibuf.Primitives.Base.set_required(my_double, false)
+            Elibuf.Primitives.Base.toggle_required(my_double)
+            # my_double.required is TRUE
         """
         def toggle_required(%Base{} = base) do
             %{base | required: !base.required}
@@ -87,27 +98,67 @@ defmodule Elibuf.Primitives do
 
         @doc """
         Sets the default value for type
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            Elibuf.Primitives.Base.set_default(my_double, 10.0)
+            # my_double.default is 10.0
         """
         def set_default(%Base{} = base, default_value) do
             %{base | default: default_value}
         end
 
+        def has_default?(%Base{} = base) do
+            base.default != :none
+        end
+
         @doc """
         Sets the order value
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            Elibuf.Primitives.Base.set_order(my_double, 1)
+            # my_double.order is 1
         """
         def set_order(%Base{} = base, order_value) when is_integer(order_value) do
             %{base | order: order_value}
         end
 
         @doc """
+        Returns true if order is set (false otherwise)
+        """
+        def has_order?(%Base{} = base) do
+            base.order != :none && is_number(base.order)
+        end
+
+        @doc """
         Sets the name of the value
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            Elibuf.Primitives.Base.set_name(my_double, "MyDouble")
+            # my_double.name is "MyDouble"
         """
         def set_name(%Base{} = base, name_value) when is_bitstring(name_value) do
             %{base | name: name_value}
         end
 
         @doc """
+        Returns true if name is set (false otherwise)
+        """
+        def has_name?(%Base{} = base) do
+            base.name != :none && is_bitstring(base.name)
+        end
+
+        @doc """
         Generates the definition of type
+
+        Example:
+            my_double = Elibuf.Primitives.double()
+            |> Elibuf.Primitives.Base.set_order(1)
+            |> Elibuf.Primitives.Base.set_name("MyDoubleValue")
+            |> Elibuf.Primitives.Base.generate
+            # Outputs optional double MyDoubleValue = 1;
         """
         def generate(%Base{} = base) do
             opt_or_rep = 
@@ -115,17 +166,62 @@ defmodule Elibuf.Primitives do
                     true -> "repeating"
                     false -> "optional"
                 end
-            opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> ";"
+            case has_default?(base) do
+                true -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "];"
+                false -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> ";"
+            end
+        end
+
+        @doc """
+        
+        """
+        def validate(%Base{} = base) do
+            
+        end
+
+        @doc """
+        
+        """
+        def validate_list(baselist) when is_list(baselist) do
+            
+        end
+
+        @doc """
+        
+        """
+        def valid?(%Base{} = base) do
+            validate(base)
         end
 
         @doc """
         Generates definition from list of bases
         """
-        def generate_list(baselist) do
+        def generate_list(baselist) when is_list(baselist) do
             baselist
             |> Enum.map(fn base ->
                 generate(base)
             end)
+        end
+
+        @doc """
+        
+        """
+        def generate_list(baselist, :auto_order, starting_point) when starting_point < length(baselist) do
+            
+        end
+
+        @doc """
+        
+        """
+        def generate_list(baselist, :auto_order, starting_point) do
+            
+        end
+
+        @doc """
+        
+        """
+        def generate_list(baselist, :auto_order) do
+            generate_list(baselist, :auto_order, 1)
         end
 
     end
