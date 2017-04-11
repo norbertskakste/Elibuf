@@ -183,7 +183,19 @@ defmodule Elibuf.Primitives do
         end
 
         @doc """
-        
+        Validates type
+        *  checks for order (has_order?)
+        *  checks for name (has_name?)
+        *  checks the type (valid_type)
+
+        Example:
+            my_string = Elibuf.Primitives.string()
+            |> Elibuf.Primitives.Base.set_order(2)
+            |> Elibuf.Primitives.Base.set_name("MyIntegerValue")
+            |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
+            |> Elibuf.Primitives.Base.validate
+            |> IO.inspect
+            # should return {%{has_name: true, has_order: true, valid_type: true}, true} 
         """
         def validate(%Base{} = base) do
             validation_errors = %{}
@@ -199,7 +211,7 @@ defmodule Elibuf.Primitives do
         end
 
         @doc """
-        
+        Validates multiple types
         """
         def validate_list(baselist) when is_list(baselist) do
             baselist
@@ -209,7 +221,7 @@ defmodule Elibuf.Primitives do
         end
 
         @doc """
-        
+        Shorthand function for validate(%Base{})
         """
         def valid?(%Base{} = base) do
             validate(base)
