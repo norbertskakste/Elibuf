@@ -186,7 +186,6 @@ defmodule Elibuf.Primitives do
         
         """
         def validate(%Base{} = base) do
-            IO.puts("VALIDATING")
             validation_errors = %{}
             |> Map.put(:has_order, has_order?(base))
             |> Map.put(:has_name, has_name?(base))
