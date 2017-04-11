@@ -1,44 +1,34 @@
 defmodule Elibuf.Primitives do
     @moduledoc """
     Protobuf primitive types
-    #------
-      Double, Float
-    #------
-      Int32, Int64
-    #------
-      Uint32, Uint64
-    #------
-      Sint32, Sint64
-    #------
-      Fixed32, Fixed64
-    #------
-      Sfixed32, Sfixed64
-    #------
-      Bool
-    #------
-      String
-    #------
-      Bytes
+    *  Double, Float
+    *  Int32, Int64
+    *  Uint32, Uint64
+    *  Sint32, Sint64
+    *  Fixed32, Fixed64
+    *  Sfixed32, Sfixed64
+    *  Bool
+    *  String
+    *  Bytes
     """
 
     defmodule Base do
         @moduledoc """
         Base primitive struct [all primitives 'build' on top of Base struct]
-
-        :type = Name of the type               [atom]
-        :repeating = is it repeating (array)   [bool]
-        :required = is it required             [bool]
-        :default = default value
+        *  :type = Name of the type               [atom]
+        *  :repeating = is it repeating (array)   [boolean]
+        *  :required = is it required             [boolean]
+        *  :default = default value
         """
 
-        defstruct type: :none, repeating: false, required: false, default: :none
+        defstruct type: :none, repeating: false, required: false, default: :none, order: :none, name: :none
 
         @doc """
         Returns boolean if type is repeating
 
         Example:
             my_double = Elibuf.Primitives.double()
-            Elibuf.Primitives.Base.repeating?(my_double) // returns false
+            Elibuf.Primitives.Base.repeating?(my_double) # returns false
         """
         def repeating?(%Base{} = base) do
             base.repeating
@@ -46,16 +36,28 @@ defmodule Elibuf.Primitives do
 
         @doc """
         Sets the repeating value
+
+        Example:
+            my_value = Elibuf.Primitives.int32()
+            Elibuf.Primitives.Base.set_repeating(my_value, true)
+            # my_value.repeating is TRUE
         """
         def set_repeating(%Base{} = base, repeating_value) when is_boolean(repeating_value) do
-            base.repeating = repeating_value
+            %{base | repeating: repeating_value}
         end
 
         @doc """
         Toggles (flips) the repeating value
+
+        Example:
+            my_value = Elibuf.Primitives.int32()
+            Elibuf.Primitives.Base.set_repeating(my_value, true)
+            # my_value.repeating is TRUE
+            Elibuf.Primitives.Base.toggle_repeating(my_value)
+            # my_value.repeating is FALSE
         """
         def toggle_repeating(%Base{} = base) do
-            base.repeating = !base.repeating
+            %{base | repeating: !base.repeating}
         end
 
         @doc """
@@ -63,7 +65,7 @@ defmodule Elibuf.Primitives do
 
         Example:
             my_double = Elibuf.Primitives.double()
-            Elibuf.Primitives.Base.required?(my_double) // returns false
+            Elibuf.Primitives.Base.required?(my_double) # returns false
         """
         def required?(%Base{} = base) do
             base.required
@@ -73,21 +75,57 @@ defmodule Elibuf.Primitives do
         Sets the required value
         """
         def set_required(%Base{} = base, required_value) when is_boolean(required_value) do
-            base.required = required_value
+            %{base | required: required_value}
         end
 
         @doc """
         Toggles (flips) the required value
         """
         def toggle_required(%Base{} = base) do
-            base.required = !base.required
+            %{base | required: !base.required}
         end
 
         @doc """
         Sets the default value for type
         """
         def set_default(%Base{} = base, default_value) do
-            base.default = default_value
+            %{base | default: default_value}
+        end
+
+        @doc """
+        Sets the order value
+        """
+        def set_order(%Base{} = base, order_value) when is_integer(order_value) do
+            %{base | order: order_value}
+        end
+
+        @doc """
+        Sets the name of the value
+        """
+        def set_name(%Base{} = base, name_value) when is_bitstring(name_value) do
+            %{base | name: name_value}
+        end
+
+        @doc """
+        Generates the definition of type
+        """
+        def generate(%Base{} = base) do
+            opt_or_rep = 
+                case repeating?(base) do
+                    true -> "repeating"
+                    false -> "optional"
+                end
+            opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> ";"
+        end
+
+        @doc """
+        Generates definition from list of bases
+        """
+        def generate_list(baselist) do
+            baselist
+            |> Enum.map(fn base ->
+                generate(base)
+            end)
         end
 
     end
@@ -96,117 +134,117 @@ defmodule Elibuf.Primitives do
     Double type
     """
     def double() do
-        %Base{type_name: :double, repeating: false, required: false, default: :none}
+        %Base{type: :double, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Float type
     """
     def float() do
-        %Base{type_name: :float, repeating: false, required: false, default: :none}
+        %Base{type: :float, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Int32 type
-    Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.
+    *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.
     """
     def int32() do
-        %Base{type_name: :int32, repeating: false, required: false, default: :none}
+        %Base{type: :int32, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Int64 type
-    Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.
+    *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.
     """
     def int64() do
-        %Base{type_name: :int64, repeating: false, required: false, default: :none}
+        %Base{type: :int64, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Uint32 type
-    Notes: Uses variable-length encoding.
+    *  Notes: Uses variable-length encoding.
     """
     def uint32() do
-        %Base{type_name: :uint32, repeating: false, required: false, default: :none}
+        %Base{type: :uint32, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Uint64 type
-    Notes: Uses variable-length encoding.
+    *  Notes: Uses variable-length encoding.
     """
     def uint64() do
-        %Base{type_name: :uint64, repeating: false, required: false, default: :none}
+        %Base{type: :uint64, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Sint32 type
-    Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.
+    *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.
     """
     def sint32() do
-        %Base{type_name: :sint32, repeating: false, required: false, default: :none}
+        %Base{type: :sint32, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Sin64 type
-    Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.
+    *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.
     """
     def sint64() do
-        %Base{type_name: :sint64, repeating: false, required: false, default: :none}
+        %Base{type: :sint64, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Fixed32 type
-    Notes: Always four bytes. More efficient than uint32 if values are often greater than 2^28.
+    *  Notes: Always four bytes. More efficient than uint32 if values are often greater than 2^28.
     """
     def fixed32() do
-        %Base{type_name: :fixed32, repeating: false, required: false, default: :none}
+        %Base{type: :fixed32, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Fixed64 type
-    Notes: Always eight bytes. More efficient than uint64 if values are often greater than 2^56.
+    *  Notes: Always eight bytes. More efficient than uint64 if values are often greater than 2^56.
     """
     def fixed64() do
-        %Base{type_name: :fixed64, repeating: false, required: false, default: :none}
+        %Base{type: :fixed64, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Sfixed32 type
-    Notes: Always four bytes.
+    *  Notes: Always four bytes.
     """
     def sfixed32() do
-        %Base{type_name: :sfixed32, repeating: false, required: false, default: :none}
+        %Base{type: :sfixed32, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Sfixed64 type
-    Notes: Always eight bytes.
+    *  Notes: Always eight bytes.
     """
     def sfixed64() do
-        %Base{type_name: :sfixed64, repeating: false, required: false, default: :none}
+        %Base{type: :sfixed64, repeating: false, required: false, default: :none}
     end
 
     @doc """
     Bool type
     """
     def bool() do
-        %Base{type_name: :bool, repeating: false, required: false, default: :none}
+        %Base{type: :bool, repeating: false, required: false, default: :none}
     end
 
     @doc """
     String type
-    Notes: A string must always contain UTF-8 encoded or 7-bit ASCII text.
+    *  Notes: A string must always contain UTF-8 encoded or 7-bit ASCII text.
     """
     def string() do
-        %Base{type_name: :string, repeating: false, required: false, default: :none}
+        %Base{type: :string, repeating: false, required: false, default: :none}
     end
     
     @doc """
     Bytes type
-    Notes: 	May contain any arbitrary sequence of bytes.
+    *  Notes: 	May contain any arbitrary sequence of bytes.
     """
     def bytes() do
-        %Base{type_name: :bytes, repeating: false, required: false, default: :none}
+        %Base{type: :bytes, repeating: false, required: false, default: :none}
     end
 
 end
