@@ -21,6 +21,11 @@ defmodule Elibuf.Primitives do
         *  :default = default value
         """
 
+        @allowed_types ~w(double float int32 int64 uint32
+                      uint64 sint32 sint64 fixed32
+                      fixed64 sfixed32 sfixed64
+                      bool string bytes)a
+
         defstruct type: :none, repeating: false, required: false, default: :none, order: :none, name: :none
 
         @doc """
@@ -150,6 +155,11 @@ defmodule Elibuf.Primitives do
             base.name != :none && is_bitstring(base.name)
         end
 
+        def valid_type(%Base{} = base) do
+            @allowed_types
+            |> Enum.member?(base.type)
+        end
+
         @doc """
         Generates the definition of type
 
@@ -176,14 +186,27 @@ defmodule Elibuf.Primitives do
         
         """
         def validate(%Base{} = base) do
-            
+            IO.puts("VALIDATING")
+            validation_errors = %{}
+            |> Map.put(:has_order, has_order?(base))
+            |> Map.put(:has_name, has_name?(base))
+            |> Map.put(:valid_type, valid_type(base))
+            case validation_errors do
+                %{has_order: false} -> {validation_errors, false}
+                %{has_name: false} -> {validation_errors, false}
+                %{valid_type: false} -> {validation_errors, false}
+                _ -> {validation_errors, true}
+            end
         end
 
         @doc """
         
         """
         def validate_list(baselist) when is_list(baselist) do
-            
+            baselist
+            |> Enum.map(fn base ->
+                validate(base)
+            end)
         end
 
         @doc """
@@ -201,27 +224,6 @@ defmodule Elibuf.Primitives do
             |> Enum.map(fn base ->
                 generate(base)
             end)
-        end
-
-        @doc """
-        
-        """
-        def generate_list(baselist, :auto_order, starting_point) when starting_point < length(baselist) do
-            
-        end
-
-        @doc """
-        
-        """
-        def generate_list(baselist, :auto_order, starting_point) do
-            
-        end
-
-        @doc """
-        
-        """
-        def generate_list(baselist, :auto_order) do
-            generate_list(baselist, :auto_order, 1)
         end
 
     end

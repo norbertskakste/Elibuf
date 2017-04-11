@@ -6,7 +6,7 @@ defmodule Elibuf.Primitives.Enum do
     end
 
     def new_enum() do
-        return %__MODULE__{}
+        %__MODULE__{}
     end
 
     def set_name(%__MODULE__{} = enum, name_value) when is_bitstring(name_value) do
@@ -18,7 +18,7 @@ defmodule Elibuf.Primitives.Enum do
     end
 
     def add_value(%__MODULE__{} = enum, %Value{} = enum_value) do
-        %{enum | values: [values | enum_value ]}
+        #%{enum | values: [values | enum_value ]}
     end
 
     def remove_value(%__MODULE__{} = enum, value_name) when is_bitstring(value_name) do
@@ -38,7 +38,7 @@ defmodule Elibuf.Primitives.Enum do
     end
 
     def toggle_alias(%__MODULE__{} = enum) do
-        %{enum | allows_alias: !allow_alias}
+        #%{enum | allows_alias: !allow_alias}
     end
 
     def validate_alias(%__MODULE__{} = enum) do
@@ -46,11 +46,11 @@ defmodule Elibuf.Primitives.Enum do
     end
 
     def set_default(%__MODULE__{} = enum, default_value) when is_bitstring(default_value) do
-        %{enum | default: default_value}
+        #%{enum | default: default_value}
     end
 
     def has_default?(%__MODULE__{} = enum) do
-        enum.default != :none
+        #enum.default != :none
     end
 
 end

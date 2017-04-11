@@ -21,4 +21,17 @@ defmodule ElibufTest do
 
     assert my_double == my_double
   end
+
+  test "valid types" do
+    my_double = Elibuf.Primitives.double()
+    |> Elibuf.Primitives.Base.set_name("MyDoubleValue")
+
+    my_string = Elibuf.Primitives.string()
+    |> Elibuf.Primitives.Base.set_order(2)
+    |> Elibuf.Primitives.Base.set_name("MyIntegerValue")
+    |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
+
+    validatons = Elibuf.Primitives.Base.validate_list([my_double, my_string])
+    |> IO.inspect
+  end
 end
