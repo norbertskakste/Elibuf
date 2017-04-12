@@ -42,9 +42,23 @@ defmodule ElibufTest do
     |> Elibuf.Primitives.Enum.add_value(custom_value_two)
     |> Elibuf.Primitives.Enum.add_value(custom_value_three)
     |> Elibuf.Primitives.Enum.generate(:auto_order)
+
+    my_double = Elibuf.Primitives.double()
+    |> Elibuf.Primitives.Base.set_order(1)
+    |> Elibuf.Primitives.Base.set_name("MyDoubleValue")
+
+    my_string = Elibuf.Primitives.string()
+    |> Elibuf.Primitives.Base.set_order(2)
+    |> Elibuf.Primitives.Base.set_name("MyStringValue")
+    |> Elibuf.Primitives.Base.toggle_required
+    |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
+
+    primitive_list = Elibuf.Primitives.Base.generate_list([my_double, my_string])
     
-    {:ok, file} = File.open "hello", [:write]
+    
+    {:ok, file} = File.open "hello.proto", [:write]
     IO.binwrite file, my_enum
+    IO.binwrite file, primitive_list
     File.close file
 
   end

@@ -180,8 +180,8 @@ defmodule Elibuf.Primitives do
                     false -> "optional"
                 end
             case has_default?(base) do
-                true -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "];"
-                false -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> ";"
+                true -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "]; // " <> inspect(base) <>"\n"
+                false -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> "; // " <> inspect(base) <>"\n"
             end
         end
 

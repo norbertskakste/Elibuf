@@ -29,7 +29,7 @@ defmodule Elibuf.Primitives.Enum do
         end
 
         def generate(%__MODULE__{} = value) do
-            "\t" <> value.name <> " = " <> Integer.to_string(value.order) <> ";"
+            "\t" <> value.name <> " = " <> Integer.to_string(value.order) <> "; // " <> inspect(value)
         end
 
         def generate_list(valuelist, :auto_order) when is_list(valuelist) do
@@ -166,7 +166,7 @@ defmodule Elibuf.Primitives.Enum do
     def generate(%__MODULE__{} = enum, :auto_order) do
         return_value =
             case allow_alias?(enum) do
-                true -> "enum " <> enum.name <> " {\n\toption allow_alias = true;\n"
+                true -> "enum " <> enum.name <> " { // " <> inspect(Map.delete(enum, :values)) <> "\n\toption allow_alias = true;\n"
                 false -> "enum " <> enum.name <> " {\n"
             end
         values = enum.values
