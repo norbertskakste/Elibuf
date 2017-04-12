@@ -68,6 +68,10 @@ defmodule Elibuf.Primitives.Enum do
             end
         end
 
+        def valid?(%__MODULE__{} = value) do
+            elem(validate(value), 1)
+        end
+
     end
 
     def new_enum() do
@@ -139,6 +143,10 @@ defmodule Elibuf.Primitives.Enum do
             %{has_values: false} -> {validation_errors, false}
             _ -> {validation_errors, true}
         end
+    end
+
+    def valid?(%__MODULE__{} = enum) do
+        elem(validate(enum), 1)
     end
     
     def generate(%__MODULE__{} = enum) do
