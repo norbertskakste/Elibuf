@@ -61,6 +61,12 @@ defmodule ElibufTest do
     IO.binwrite file, primitive_list
     File.close file
 
+    message = Elibuf.Message.new_value("customMessage")
+    |> Elibuf.Message.add_value(my_double)
+    |> Elibuf.Message.add_value(my_string)
+    |> Elibuf.Message.generate
+    |> IO.puts
+
   end
 
   test "enum validation" do
