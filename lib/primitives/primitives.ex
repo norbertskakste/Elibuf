@@ -241,7 +241,7 @@ defmodule Elibuf.Primitives do
         Shorthand function for validate(%Base{})
         """
         def valid?(%Base{} = base) do
-            validate(base)
+            elem(validate(base), 1)
         end
 
         @doc """
