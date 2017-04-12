@@ -2,4 +2,5 @@ enum TestEnum {
 	option allow_alias = true;
 	CUSTOM_VALUE = 0;
 	CUSTOM_VALUE_TWO = 1;
+	CUSTOM_VALUE_THREE = 2;
 }

@@ -1,15 +1,52 @@
 defmodule Elibuf.Primitives.Enum do
-    defstruct name: :none, values: [], allow_alias: false
+    defstruct name: nil, values: [], allow_alias: false
 
     defmodule Value do
-        defstruct name: :none, order: :none
+        defstruct name: nil, order: nil
 
         def new_value(name, order) when is_bitstring(name) and is_integer(order) and order >= 0 do
             %__MODULE__{name: name, order: order}
         end
 
+        def new_value(name) when is_bitstring(name) do
+            %__MODULE__{name: name}
+        end
+
+        def set_name(%__MODULE__{} =  value, name_value) when is_bitstring(name_value) do
+            %{value | name: name_value}
+        end
+
+        def has_name?(%__MODULE__{} = value) do
+            is_bitstring(value.name)
+        end
+
+        def set_order(%__MODULE__{} = value, order_value) when is_integer(order_value) do
+            %{value | order: order_value}
+        end
+
+        def has_order?(%__MODULE__{} = value) do
+            is_integer(value.order) && value.order >= 0
+        end
+
         def generate(%__MODULE__{} = value) do
             "\t" <> value.name <> " = " <> Integer.to_string(value.order) <> ";"
+        end
+
+        def generate_list(valuelist, :auto_order) when is_list(valuelist) do
+            generate_list(valuelist, 0)
+        end
+
+        def generate_list(valuelist, starting_point) when is_list(valuelist) and is_integer(starting_point) do
+            valuelist
+            |> Enum.reverse
+            |> Enum.with_index(starting_point)
+            |> Enum.map(fn value ->
+                real_value = elem(value, 0)
+                set_order(real_value, elem(value, 1))
+            end)
+            |> Enum.map(fn value ->
+                generate(value)
+            end)
         end
 
         def generate_list(valuelist) when is_list(valuelist) do
@@ -22,8 +59,8 @@ defmodule Elibuf.Primitives.Enum do
 
         def validate(%__MODULE__{} = value) do
             validation_errors = %{}
-            |> Map.put(:has_name, is_bitstring(value.name))
-            |> Map.put(:has_order, is_integer(value.order))
+            |> Map.put(:has_name, has_name?(value))
+            |> Map.put(:has_order, has_order?(value))
             case validation_errors do
                 %{has_name: false} -> {validation_errors, false}
                 %{has_order: false} -> {validation_errors, false}
@@ -50,7 +87,7 @@ defmodule Elibuf.Primitives.Enum do
     end
 
     def has_name?(%__MODULE__{} = enum) do
-        enum.name != :none && is_bitstring(enum.name)
+        enum.name != nil && is_bitstring(enum.name)
     end
 
     def add_value(%__MODULE__{} = enum, %Value{} = enum_value) do
@@ -96,6 +133,7 @@ defmodule Elibuf.Primitives.Enum do
         validation_errors = %{}
         |> Map.put(:has_name, has_name?(enum))
         |> Map.put(:has_values, has_values?(enum))
+
         case validation_errors do
             %{has_name: false} -> {validation_errors, false}
             %{has_values: false} -> {validation_errors, false}
@@ -112,6 +150,19 @@ defmodule Elibuf.Primitives.Enum do
 
         values = enum.values
         |> Value.generate_list
+        |> Enum.join("\n")
+
+        return_value <> values <> "\n}\n"
+    end
+
+    def generate(%__MODULE__{} = enum, :auto_order) do
+        return_value =
+            case allow_alias?(enum) do
+                true -> "enum " <> enum.name <> " {\n\toption allow_alias = true;\n"
+                false -> "enum " <> enum.name <> " {\n"
+            end
+        values = enum.values
+        |> Value.generate_list(:auto_order)
         |> Enum.join("\n")
 
         return_value <> values <> "\n}\n"

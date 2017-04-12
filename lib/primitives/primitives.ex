@@ -26,7 +26,7 @@ defmodule Elibuf.Primitives do
                       fixed64 sfixed32 sfixed64
                       bool string bytes)a
 
-        defstruct type: :none, repeating: false, required: false, default: :none, order: :none, name: :none
+        defstruct type: nil, repeating: false, required: false, default: nil, order: nil, name: nil
 
         @doc """
         Returns boolean if type is repeating
@@ -114,7 +114,7 @@ defmodule Elibuf.Primitives do
         end
 
         def has_default?(%Base{} = base) do
-            base.default != :none
+            is_integer(base.default)
         end
 
         @doc """
@@ -133,7 +133,7 @@ defmodule Elibuf.Primitives do
         Returns true if order is set (false otherwise)
         """
         def has_order?(%Base{} = base) do
-            base.order != :none && is_number(base.order)
+            is_number(base.order)
         end
 
         @doc """
@@ -152,7 +152,7 @@ defmodule Elibuf.Primitives do
         Returns true if name is set (false otherwise)
         """
         def has_name?(%Base{} = base) do
-            base.name != :none && is_bitstring(base.name)
+            is_bitstring(base.name)
         end
 
         @doc """
@@ -260,14 +260,14 @@ defmodule Elibuf.Primitives do
     Double type
     """
     def double() do
-        %Base{type: :double, repeating: false, required: false, default: :none}
+        %Base{type: :double, repeating: false, required: false, default: nil}
     end
 
     @doc """
     Float type
     """
     def float() do
-        %Base{type: :float, repeating: false, required: false, default: :none}
+        %Base{type: :float, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -275,7 +275,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.
     """
     def int32() do
-        %Base{type: :int32, repeating: false, required: false, default: :none}
+        %Base{type: :int32, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -283,7 +283,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.
     """
     def int64() do
-        %Base{type: :int64, repeating: false, required: false, default: :none}
+        %Base{type: :int64, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -291,7 +291,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding.
     """
     def uint32() do
-        %Base{type: :uint32, repeating: false, required: false, default: :none}
+        %Base{type: :uint32, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -299,7 +299,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding.
     """
     def uint64() do
-        %Base{type: :uint64, repeating: false, required: false, default: :none}
+        %Base{type: :uint64, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -307,7 +307,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.
     """
     def sint32() do
-        %Base{type: :sint32, repeating: false, required: false, default: :none}
+        %Base{type: :sint32, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -315,7 +315,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.
     """
     def sint64() do
-        %Base{type: :sint64, repeating: false, required: false, default: :none}
+        %Base{type: :sint64, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -323,7 +323,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always four bytes. More efficient than uint32 if values are often greater than 2^28.
     """
     def fixed32() do
-        %Base{type: :fixed32, repeating: false, required: false, default: :none}
+        %Base{type: :fixed32, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -331,7 +331,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always eight bytes. More efficient than uint64 if values are often greater than 2^56.
     """
     def fixed64() do
-        %Base{type: :fixed64, repeating: false, required: false, default: :none}
+        %Base{type: :fixed64, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -339,7 +339,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always four bytes.
     """
     def sfixed32() do
-        %Base{type: :sfixed32, repeating: false, required: false, default: :none}
+        %Base{type: :sfixed32, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -347,14 +347,14 @@ defmodule Elibuf.Primitives do
     *  Notes: Always eight bytes.
     """
     def sfixed64() do
-        %Base{type: :sfixed64, repeating: false, required: false, default: :none}
+        %Base{type: :sfixed64, repeating: false, required: false, default: nil}
     end
 
     @doc """
     Bool type
     """
     def bool() do
-        %Base{type: :bool, repeating: false, required: false, default: :none}
+        %Base{type: :bool, repeating: false, required: false, default: nil}
     end
 
     @doc """
@@ -362,7 +362,7 @@ defmodule Elibuf.Primitives do
     *  Notes: A string must always contain UTF-8 encoded or 7-bit ASCII text.
     """
     def string() do
-        %Base{type: :string, repeating: false, required: false, default: :none}
+        %Base{type: :string, repeating: false, required: false, default: nil}
     end
     
     @doc """
@@ -370,7 +370,7 @@ defmodule Elibuf.Primitives do
     *  Notes: 	May contain any arbitrary sequence of bytes.
     """
     def bytes() do
-        %Base{type: :bytes, repeating: false, required: false, default: :none}
+        %Base{type: :bytes, repeating: false, required: false, default: nil}
     end
 
 end
