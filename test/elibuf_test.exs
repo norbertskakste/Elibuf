@@ -32,16 +32,19 @@ defmodule ElibufTest do
   end
 
   test "enums" do
-    custom_value = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE")
-    custom_value_two = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE_TWO")
-    custom_value_three = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE_THREE")
+    custom_value = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE", 0)
+    custom_value_two = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE_TWO", 1)
+    custom_value_three = Elibuf.Primitives.Enum.Value.new_value("CUSTOM_VALUE_THREE", 2)
     my_enum = Elibuf.Primitives.Enum.new_enum
     |> Elibuf.Primitives.Enum.set_name("TestEnum")
     |> Elibuf.Primitives.Enum.toggle_alias
     |> Elibuf.Primitives.Enum.add_value(custom_value)
     |> Elibuf.Primitives.Enum.add_value(custom_value_two)
     |> Elibuf.Primitives.Enum.add_value(custom_value_three)
-    |> Elibuf.Primitives.Enum.generate(:auto_order)
+    my_enum_value = Elibuf.Primitives.Enum.generate(my_enum)
+
+    Elibuf.Primitives.Enum.validate(my_enum)
+    |> IO.inspect
 
     my_double = Elibuf.Primitives.double()
     |> Elibuf.Primitives.Base.set_order(1)
@@ -57,7 +60,7 @@ defmodule ElibufTest do
     
     
     {:ok, file} = File.open "hello.proto", [:write]
-    IO.binwrite file, my_enum
+    IO.binwrite file, my_enum_value
     IO.binwrite file, primitive_list
     File.close file
 

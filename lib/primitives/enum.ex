@@ -133,10 +133,17 @@ defmodule Elibuf.Primitives.Enum do
         enum.allow_alias
     end
 
+    def should_alias?(%__MODULE__{} = enum) do
+        uniq_values = enum.values
+        |> Enum.uniq_by(fn %{} = value -> value.order end)
+        length(enum.values) == length(uniq_values)
+    end
+
     def validate(%__MODULE__{} = enum) do
         validation_errors = %{}
         |> Map.put(:has_name, has_name?(enum))
         |> Map.put(:has_values, has_values?(enum))
+        |> Map.put(:aliasing_check, should_alias?(enum))
 
         case validation_errors do
             %{has_name: false} -> {validation_errors, false}

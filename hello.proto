@@ -1,4 +1,4 @@
-enum TestEnum { // %{__struct__: Elibuf.Primitives.Enum, allow_alias: true, name: "TestEnum"}
+enum TestEnum {
 	option allow_alias = true;
 	CUSTOM_VALUE = 0; // %Elibuf.Primitives.Enum.Value{name: "CUSTOM_VALUE", order: 0}
 	CUSTOM_VALUE_TWO = 1; // %Elibuf.Primitives.Enum.Value{name: "CUSTOM_VALUE_TWO", order: 1}
