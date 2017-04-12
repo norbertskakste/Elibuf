@@ -17,16 +17,15 @@ defmodule Elibuf.Primitives do
         Base primitive struct [all primitives 'build' on top of Base struct]
         *  :type = Name of the type               [atom]
         *  :repeating = is it repeating (array)   [boolean]
-        *  :required = is it required             [boolean]
         *  :default = default value
         """
 
         @allowed_types ~w(double float int32 int64 uint32
                       uint64 sint32 sint64 fixed32
                       fixed64 sfixed32 sfixed64
-                      bool string bytes)a
+                      bool string bytes enum)a
 
-        defstruct type: nil, repeating: false, required: false, default: nil, order: nil, name: nil
+        defstruct type: nil, repeating: false, default: nil, order: nil, name: nil
 
         @doc """
         Returns boolean if type is repeating
@@ -63,42 +62,6 @@ defmodule Elibuf.Primitives do
         """
         def toggle_repeating(%Base{} = base) do
             %{base | repeating: !base.repeating}
-        end
-
-        @doc """
-        Returns boolean if type is required
-
-        Example:
-            my_double = Elibuf.Primitives.double()
-            Elibuf.Primitives.Base.required?(my_double) # returns false
-        """
-        def required?(%Base{} = base) do
-            base.required
-        end
-
-        @doc """
-        Sets the required value
-
-        Example:
-            my_double = Elibuf.Primitives.double()
-            Elibuf.Primitives.Base.set_required(my_double, true)
-            # my_double.required is TRUE
-        """
-        def set_required(%Base{} = base, required_value) when is_boolean(required_value) do
-            %{base | required: required_value}
-        end
-
-        @doc """
-        Toggles (flips) the required value
-
-        Example:
-            my_double = Elibuf.Primitives.double()
-            Elibuf.Primitives.Base.set_required(my_double, false)
-            Elibuf.Primitives.Base.toggle_required(my_double)
-            # my_double.required is TRUE
-        """
-        def toggle_required(%Base{} = base) do
-            %{base | required: !base.required}
         end
 
         @doc """
@@ -260,14 +223,14 @@ defmodule Elibuf.Primitives do
     Double type
     """
     def double() do
-        %Base{type: :double, repeating: false, required: false, default: nil}
+        %Base{type: :double, repeating: false, default: nil}
     end
 
     @doc """
     Float type
     """
     def float() do
-        %Base{type: :float, repeating: false, required: false, default: nil}
+        %Base{type: :float, repeating: false, default: nil}
     end
 
     @doc """
@@ -275,7 +238,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.
     """
     def int32() do
-        %Base{type: :int32, repeating: false, required: false, default: nil}
+        %Base{type: :int32, repeating: false, default: nil}
     end
 
     @doc """
@@ -283,7 +246,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.
     """
     def int64() do
-        %Base{type: :int64, repeating: false, required: false, default: nil}
+        %Base{type: :int64, repeating: false, default: nil}
     end
 
     @doc """
@@ -291,7 +254,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding.
     """
     def uint32() do
-        %Base{type: :uint32, repeating: false, required: false, default: nil}
+        %Base{type: :uint32, repeating: false, default: nil}
     end
 
     @doc """
@@ -299,7 +262,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding.
     """
     def uint64() do
-        %Base{type: :uint64, repeating: false, required: false, default: nil}
+        %Base{type: :uint64, repeating: false, default: nil}
     end
 
     @doc """
@@ -307,7 +270,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.
     """
     def sint32() do
-        %Base{type: :sint32, repeating: false, required: false, default: nil}
+        %Base{type: :sint32, repeating: false, default: nil}
     end
 
     @doc """
@@ -315,7 +278,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.
     """
     def sint64() do
-        %Base{type: :sint64, repeating: false, required: false, default: nil}
+        %Base{type: :sint64, repeating: false, default: nil}
     end
 
     @doc """
@@ -323,7 +286,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always four bytes. More efficient than uint32 if values are often greater than 2^28.
     """
     def fixed32() do
-        %Base{type: :fixed32, repeating: false, required: false, default: nil}
+        %Base{type: :fixed32, repeating: false, default: nil}
     end
 
     @doc """
@@ -331,7 +294,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always eight bytes. More efficient than uint64 if values are often greater than 2^56.
     """
     def fixed64() do
-        %Base{type: :fixed64, repeating: false, required: false, default: nil}
+        %Base{type: :fixed64, repeating: false, default: nil}
     end
 
     @doc """
@@ -339,7 +302,7 @@ defmodule Elibuf.Primitives do
     *  Notes: Always four bytes.
     """
     def sfixed32() do
-        %Base{type: :sfixed32, repeating: false, required: false, default: nil}
+        %Base{type: :sfixed32, repeating: false, default: nil}
     end
 
     @doc """
@@ -347,14 +310,14 @@ defmodule Elibuf.Primitives do
     *  Notes: Always eight bytes.
     """
     def sfixed64() do
-        %Base{type: :sfixed64, repeating: false, required: false, default: nil}
+        %Base{type: :sfixed64, repeating: false, default: nil}
     end
 
     @doc """
     Bool type
     """
     def bool() do
-        %Base{type: :bool, repeating: false, required: false, default: nil}
+        %Base{type: :bool, repeating: false, default: nil}
     end
 
     @doc """
@@ -362,7 +325,7 @@ defmodule Elibuf.Primitives do
     *  Notes: A string must always contain UTF-8 encoded or 7-bit ASCII text.
     """
     def string() do
-        %Base{type: :string, repeating: false, required: false, default: nil}
+        %Base{type: :string, repeating: false, default: nil}
     end
     
     @doc """
@@ -370,7 +333,7 @@ defmodule Elibuf.Primitives do
     *  Notes: 	May contain any arbitrary sequence of bytes.
     """
     def bytes() do
-        %Base{type: :bytes, repeating: false, required: false, default: nil}
+        %Base{type: :bytes, repeating: false, default: nil}
     end
 
 end
