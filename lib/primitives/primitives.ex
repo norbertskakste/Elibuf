@@ -217,6 +217,22 @@ defmodule Elibuf.Primitives do
             end)
         end
 
+        def generate_list(baselist, :auto_order) when is_list(baselist) do
+            generate_list(baselist, 1)
+        end
+
+        def generate_list(baselist, starting_point) when is_list(baselist) and is_integer(starting_point) and starting_point >= 1 do
+            baselist
+            |> Enum.with_index(starting_point)
+            |> Enum.map(fn base ->
+                real_base = elem(base, 0)
+                set_order(real_base, elem(base, 1))
+            end)
+            |> Enum.map(fn base ->
+                generate(base)
+            end)
+        end
+
     end
 
     @doc """

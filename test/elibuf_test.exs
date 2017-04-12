@@ -53,7 +53,6 @@ defmodule ElibufTest do
     my_string = Elibuf.Primitives.string()
     |> Elibuf.Primitives.Base.set_order(2)
     |> Elibuf.Primitives.Base.set_name("MyStringValue")
-    |> Elibuf.Primitives.Base.toggle_required
     |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
 
     primitive_list = Elibuf.Primitives.Base.generate_list([my_double, my_string])
