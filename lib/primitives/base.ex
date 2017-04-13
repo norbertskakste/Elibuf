@@ -134,6 +134,10 @@ defmodule Elibuf.Primitives.Base do
             end
         end
 
+        def generate(%__MODULE__{} = base, :indent) do
+            "\t" <> generate(base)
+        end
+
         @doc """
         Validates type
         *  checks for order (has_order?)
@@ -217,6 +221,29 @@ defmodule Elibuf.Primitives.Base do
             |> Enum.map(fn base ->
                 generate(base)
             end)
+        end
+
+        def generate_list(baselist, :indent) when is_list(baselist) do
+            baselist
+            |> Enum.map(fn base ->
+                generate(base, :indent)
+            end)
+        end
+
+        def generate_list(baselist, starting_point, :indent) when is_list(baselist) and is_integer(starting_point) and starting_point >= 1 do
+            baselist
+            |> Enum.with_index(starting_point)
+            |> Enum.map(fn base ->
+                real_base = elem(base, 0)
+                set_order(real_base, elem(base, 1))
+            end)
+            |> Enum.map(fn base ->
+                generate(base, :indent)
+            end)
+        end
+
+        def generate_list(baselist, :auto_order, :indent) do
+            generate_list(baselist, 1, :indent)
         end
 
     end
