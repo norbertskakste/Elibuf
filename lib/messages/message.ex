@@ -21,7 +21,7 @@ defmodule Elibuf.Message do
 
     def generate(%__MODULE__{} = message) do
         return_value = "message " <> message.name <> " {\n"
-        bases = Primitives.Base.generate_list(message.values, :auto_order)
+        bases = Primitives.Base.generate_list(message.values, :auto_order, :indent)
         |> Enum.join("")
 
         return_value <> bases <> "}\n"
