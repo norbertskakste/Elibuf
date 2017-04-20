@@ -13,6 +13,7 @@ defmodule Elibuf.Primitives do
     *  Bool
     *  String
     *  Bytes
+    *  Enum
     """
 
     @doc """
@@ -132,4 +133,11 @@ defmodule Elibuf.Primitives do
         %Base{type: :bytes, repeating: false, default: nil}
     end
 
-end
+    @doc """
+    Enum type
+    """
+    def enum() do
+      %Base{type: :enum, repeating: false, default: nil}
+    end
+
+ end

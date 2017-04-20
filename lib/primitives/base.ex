@@ -138,6 +138,10 @@ defmodule Elibuf.Primitives.Base do
             "\t" <> generate(base)
         end
 
+        def validate_enum(%__MODULE__{} = base, %Elibuf.Primitives.Enum{} = enum) do
+
+        end
+
         @doc """
         Validates type
         *  checks for order (has_order?)
@@ -201,7 +205,7 @@ defmodule Elibuf.Primitives.Base do
         Generates definition from list of bases
         """
         def generate_list(baselist) when is_list(baselist) do
-            baselist
+          baselist
             |> Enum.map(fn base ->
                 generate(base)
             end)
