@@ -15,7 +15,6 @@ defmodule ElibufTest do
     |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
 
     Elibuf.Primitives.Base.generate_list([my_double, my_string], :auto_order)
-    |> IO.inspect
     assert my_double == my_double
   end
 
@@ -41,21 +40,28 @@ defmodule ElibufTest do
     |> Elibuf.Primitives.Enum.add_value(custom_value_three)
     my_enum_value = Elibuf.Primitives.Enum.generate(my_enum)
 
+    my_enum_value_generated = Elibuf.Primitives.enum()
+    |> Elibuf.Primitives.Base.set_order(1)
+    |> Elibuf.Primitives.Base.set_name("MyEnumValue")
+    |> Elibuf.Primitives.Base.set_enum_link(my_enum)
+    |> Elibuf.Primitives.Base.generate
+
+
     Elibuf.Primitives.Enum.validate(my_enum)
-    |> IO.inspect
 
     my_double = Elibuf.Primitives.double()
-    |> Elibuf.Primitives.Base.set_order(1)
+    |> Elibuf.Primitives.Base.set_order(2)
     |> Elibuf.Primitives.Base.set_name("MyDoubleValue")
 
     my_string = Elibuf.Primitives.string()
-    |> Elibuf.Primitives.Base.set_order(2)
+    |> Elibuf.Primitives.Base.set_order(3)
     |> Elibuf.Primitives.Base.set_name("MyStringValue")
     |> Elibuf.Primitives.Base.set_default("MY_DEFAULT_VALUE")
 
     primitive_list = Elibuf.Primitives.Base.generate_list([my_double, my_string])
-    
-    
+
+
+
     {:ok, file} = File.open "hello.proto", [:write]
     IO.binwrite file, my_enum_value
     IO.binwrite file, primitive_list
@@ -64,7 +70,19 @@ defmodule ElibufTest do
     message = Elibuf.Message.new_value("customMessage")
     |> Elibuf.Message.add_value(my_double)
     |> Elibuf.Message.add_value(my_string)
-    |> Elibuf.Message.generate
+
+    another_message = Elibuf.Message.new_value("AnotherMessage")
+    |> Elibuf.Message.add_value(my_double)
+
+    custom_rpc = Elibuf.Services.Rpc.new_rpc("CustomRpc", message, message)
+
+    another_custom_rpc = Elibuf.Services.Rpc.new_rpc("AnotherCustomRpc", message, another_message)
+
+    custom_service = Elibuf.Services.new_service("CustomService")
+    |> Elibuf.Services.add_rpc(custom_rpc)
+    |> Elibuf.Services.add_rpc(another_custom_rpc)
+    |> Elibuf.Services.add_rpc(custom_rpc)
+    |> Elibuf.Services.generate(:indent)
     |> IO.puts
 
   end

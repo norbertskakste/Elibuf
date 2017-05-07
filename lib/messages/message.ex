@@ -19,6 +19,10 @@ defmodule Elibuf.Message do
         %{message | values: [base | message.values ]}
     end
 
+    def add_values(%__MODULE__{} = message, values) when is_list(values) do
+      %{message | values: [values | message.values ]}
+    end
+
     def generate(%__MODULE__{} = message) do
         return_value = "message " <> message.name <> " {\n"
         bases = Primitives.Base.generate_list(message.values, :auto_order, :indent)

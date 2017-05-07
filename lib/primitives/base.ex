@@ -9,9 +9,10 @@ defmodule Elibuf.Primitives.Base do
         @allowed_types ~w(double float int32 int64 uint32
                       uint64 sint32 sint64 fixed32
                       fixed64 sfixed32 sfixed64
-                      bool string bytes enum)a
+                      bool string bytes enum timestamp
+                      duration)a
 
-        defstruct type: nil, repeating: false, default: nil, order: nil, name: nil
+        defstruct type: nil, repeating: false, default: nil, order: nil, name: nil, imports: []
 
         @doc """
         Returns boolean if type is repeating
@@ -33,7 +34,11 @@ defmodule Elibuf.Primitives.Base do
             # my_value.repeating is TRUE
         """
         def set_repeating(%__MODULE__{} = base, repeating_value) when is_boolean(repeating_value) do
-            %{base | repeating: repeating_value}
+          %{base | repeating: repeating_value}
+        end
+
+        def set_repeating(%__MODULE__{} = base, nil) do
+          %{base | repeating: false}
         end
 
         @doc """
@@ -78,6 +83,10 @@ defmodule Elibuf.Primitives.Base do
             %{base | order: order_value}
         end
 
+        def set_order(%__MODULE__{} = base, nil) do
+          %{base | order: nil}
+        end
+
         @doc """
         Returns true if order is set (false otherwise)
         """
@@ -112,6 +121,22 @@ defmodule Elibuf.Primitives.Base do
             |> Enum.member?(base.type)
         end
 
+        def generate(%__MODULE__{type: :enum} = base) do
+            opt_or_rep = 
+                case repeating?(base) do
+                    true -> "repeating"
+                    false -> "optional"
+                end
+            case has_default?(base) do
+                true -> opt_or_rep <> " " <> base.enum_link.name <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "]; // " <> inspect(base) <>"\n"
+                false -> opt_or_rep <> " " <> base.enum_link.name <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> "; // " <> inspect(base) <>"\n"
+            end
+        end
+
+        def generate(%__MODULE__{type: :timestamp} = base) do
+
+        end
+
         @doc """
         Generates the definition of type
 
@@ -136,10 +161,6 @@ defmodule Elibuf.Primitives.Base do
 
         def generate(%__MODULE__{} = base, :indent) do
             "\t" <> generate(base)
-        end
-
-        def validate_enum(%__MODULE__{} = base, %Elibuf.Primitives.Enum{} = enum) do
-
         end
 
         @doc """

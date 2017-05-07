@@ -2,7 +2,7 @@ defmodule Elibuf.Primitives.Enum do
     defstruct name: nil, values: [], allow_alias: false
 
     defmodule Value do
-        defstruct name: nil, order: nil
+        defstruct name: nil, order: nil, type: :enum
 
         def new_value(name, order) when is_bitstring(name) and is_integer(order) and order >= 0 do
             %__MODULE__{name: name, order: order}
@@ -139,7 +139,7 @@ defmodule Elibuf.Primitives.Enum do
         length(enum.values) == length(uniq_values)
     end
 
-    def validate(%__MODULE__{} = enum) do
+    def validate(%__MODULE__{} = enum) do 
         validation_errors = %{}
         |> Map.put(:has_name, has_name?(enum))
         |> Map.put(:has_values, has_values?(enum))

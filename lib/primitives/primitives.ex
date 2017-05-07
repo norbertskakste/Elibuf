@@ -140,4 +140,18 @@ defmodule Elibuf.Primitives do
       %Base{type: :enum, repeating: false, default: nil}
     end
 
+    @doc """
+    Timestamp type
+    """
+    def timestamp()do
+      %Base{type: :timestamp, repeating: false, default: nil}
+    end
+
+    @doc """
+    Duration type
+    """
+    def duration() do
+      %Base{type: :duration, repeating: false, default: nil}
+    end
+
  end

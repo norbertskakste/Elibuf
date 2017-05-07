@@ -4,5 +4,5 @@ enum TestEnum {
 	CUSTOM_VALUE_TWO = 1; // %Elibuf.Primitives.Enum.Value{name: "CUSTOM_VALUE_TWO", order: 1}
 	CUSTOM_VALUE_THREE = 2; // %Elibuf.Primitives.Enum.Value{name: "CUSTOM_VALUE_THREE", order: 2}
 }
-optional double MyDoubleValue = 1; // %Elibuf.Primitives.Base{default: nil, name: "MyDoubleValue", order: 1, repeating: false, type: :double}
-optional string MyStringValue = 2; // %Elibuf.Primitives.Base{default: "MY_DEFAULT_VALUE", name: "MyStringValue", order: 2, repeating: false, type: :string}
+optional double MyDoubleValue = 2; // %Elibuf.Primitives.Base{default: nil, enum_link: nil, name: "MyDoubleValue", order: 2, repeating: false, type: :double}
+optional string MyStringValue = 3; // %Elibuf.Primitives.Base{default: "MY_DEFAULT_VALUE", enum_link: nil, name: "MyStringValue", order: 3, repeating: false, type: :string}
