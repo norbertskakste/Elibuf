@@ -150,12 +150,12 @@ defmodule Elibuf.Primitives.Base do
         def generate(%__MODULE__{} = base) do
             opt_or_rep = 
                 case repeating?(base) do
-                    true -> "repeating"
-                    false -> "optional"
+                    true -> "repeated "
+                    _ -> ""
                 end
             case has_default?(base) do
-                true -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "]; // " <> inspect(base) <>"\n"
-                false -> opt_or_rep <> " " <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> "; // " <> inspect(base) <>"\n"
+                true -> opt_or_rep <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> " [default = " <> base.default <> "]; // " <> inspect(base) <>"\n"
+                false -> opt_or_rep  <> Atom.to_string(base.type) <> " " <> base.name <> " = " <> Integer.to_string(base.order) <> "; // " <> inspect(base) <>"\n"
             end
         end
 

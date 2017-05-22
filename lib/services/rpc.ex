@@ -40,11 +40,11 @@ defmodule Elibuf.Services.Rpc do
   end
 
   def generate(%__MODULE__{} = rpc) do
-    "rpc " <> rpc.name <> " (" <> rpc.request.name <> ") responses (" <> rpc.response.name <> ") {}"
+    "rpc " <> rpc.name <> " (" <> rpc.request.name <> ") response (" <> rpc.response.name <> ") {}"
   end
 
   def generate(%__MODULE__{} = rpc, :indent) do
-    "\trpc " <> rpc.name <> " (" <> rpc.request.name <> ") responses (" <> rpc.response.name <> ") {}"
+    "\trpc " <> rpc.name <> " (" <> rpc.request.name <> ") response (" <> rpc.response.name <> ") {}"
   end
 
 end
